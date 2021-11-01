@@ -75,7 +75,7 @@ namespace GimmeProxy
     /// The proxy port number.
     /// </summary>
     [DataMember(Name = "port")]
-    public string Port { get; set; }
+    public int Port { get; set; }
 
     /// <summary>
     /// List of websites that work (and don't work) through this proxy.

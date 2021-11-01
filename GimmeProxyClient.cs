@@ -21,8 +21,8 @@ namespace GimmeProxy
     /// <returns>
     /// Random proxy details.
     /// </returns>
-    public static Task<GimmeProxyResponse> GetRandomProxy(CancellationToken cancellationToken = default)
-      => GetRandomProxy(defaultHttpClient, new(), cancellationToken);
+    public static Task<GimmeProxyResponse> GetRandomProxyAsync(CancellationToken cancellationToken = default)
+      => GetRandomProxyAsync(defaultHttpClient, new(), cancellationToken);
 
     /// <summary>
     /// Returns one random proxy with additional filter parameters.
@@ -33,8 +33,8 @@ namespace GimmeProxy
     /// <returns>
     /// Random proxy details.
     /// </returns>
-    public static Task<GimmeProxyResponse> GetRandomProxy(GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
-      => GetRandomProxy(defaultHttpClient, proxyOptions, cancellationToken);
+    public static Task<GimmeProxyResponse> GetRandomProxyAsync(GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
+      => GetRandomProxyAsync(defaultHttpClient, proxyOptions, cancellationToken);
 
     /// <summary>
     /// Returns one random proxy with additional filter parameters.
@@ -46,9 +46,10 @@ namespace GimmeProxy
     /// <returns>
     /// Random proxy details.
     /// </returns>
-    public static async Task<GimmeProxyResponse> GetRandomProxy(HttpClient httpClient, GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
+    public static async Task<GimmeProxyResponse> GetRandomProxyAsync(HttpClient httpClient, GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
     {
-      var response = await httpClient.GetAsync(proxyOptions.ToString(), cancellationToken).ConfigureAwait(false);
+      var url = proxyOptions.ToString();
+      var response = await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
       response.EnsureSuccessStatusCode();
 #if NET472
@@ -58,10 +59,18 @@ namespace GimmeProxy
 #endif
 
 #if NET472
-      return JsonConvert.DeserializeObject<GimmeProxyResponse>(json.Replace("<br>", string.Empty).Replace("<BR>", string.Empty));
+      var cleanJson = json.Replace("<br>", string.Empty)
+                          .Replace("<BR>", string.Empty)
+                          .Replace("{},", "[],");
+
+      return JsonConvert.DeserializeObject<GimmeProxyResponse>(cleanJson);
 #else
       // Some data comes back with <br> tags, this is just a sweeping replace cleanup.
-      return JsonConvert.DeserializeObject<GimmeProxyResponse>(json.Replace("<br>", string.Empty, StringComparison.OrdinalIgnoreCase));
+      // OtherProtocols also comes back as an object instead of an empty array.
+      var cleanJson = json.Replace("<br>", string.Empty, StringComparison.OrdinalIgnoreCase)
+                          .Replace("{},", "[],");
+
+      return JsonConvert.DeserializeObject<GimmeProxyResponse>(cleanJson);
 #endif
     }
   }

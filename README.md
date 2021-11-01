@@ -13,7 +13,7 @@ Install-Package GimmeProxy
 ```
 
 Random proxy getter methods are provided in a simple static class called `GimmeProxyClient`.
-Use the various `GetRandomProxyAsync` overloads to retrive a random proxy using the [GimmeProxy API]([GimmeProxy - free rotating proxy api](https://gimmeproxy.com/#api)).
+Use the various `GetRandomProxyAsync` overloads to retrive a random proxy using the [GimmeProxy API](https://gimmeproxy.com/#api).
 
 ```csharp
 using GimmeProxy;
@@ -36,7 +36,7 @@ public class Program
     // https://gimmeproxy.com/api/getProxy?post=true&supportsHttps=true&maxCheckPeriod=3600
     var url = request.ToString();
     
-    // You can also sign-up for an API key.
+    // You can also sign-up for an API key for commercial use.
     requestOptions.ApiKey = "xxxxxxx";
     
     var anotherProxy = await GimmeProxyClient.GetRandomProxyAsync(requestOptions);
@@ -45,3 +45,4 @@ public class Program
 ```
 
 The wrapper is fully documented. If you need more information, please refer to the [GimmeProxy API page](https://gimmeproxy.com/#api).
+To use this API for commercial use you need an [API Key](https://gimmeproxy.com/#pricing) from GimmeProxy.

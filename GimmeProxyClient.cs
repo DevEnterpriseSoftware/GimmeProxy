@@ -52,26 +52,23 @@ namespace GimmeProxy
       var response = await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
       response.EnsureSuccessStatusCode();
-#if NET472
-      var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-#else
-      var json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-#endif
 
-#if NET472
+#if NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0 || NETCOREAPP3_1 || NET45 || NET451 || NET452 || NET6 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
+      var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
       var cleanJson = json.Replace("<br>", string.Empty)
                           .Replace("<BR>", string.Empty)
                           .Replace("{},", "[],");
-
-      return JsonConvert.DeserializeObject<GimmeProxyResponse>(cleanJson);
 #else
+      var json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
       // Some data comes back with <br> tags, this is just a sweeping replace cleanup.
       // OtherProtocols also comes back as an object instead of an empty array.
       var cleanJson = json.Replace("<br>", string.Empty, StringComparison.OrdinalIgnoreCase)
                           .Replace("{},", "[],");
+#endif
 
       return JsonConvert.DeserializeObject<GimmeProxyResponse>(cleanJson);
-#endif
     }
   }
 }

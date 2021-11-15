@@ -6,7 +6,7 @@ This is a C# wrapper around the [GimmeProxy API](https://gimmeproxy.com/#api).
 
 ### Getting started
 
-Install GimmeProxy from NuGet:
+Install GimmeProxy from [NuGet](https://www.nuget.org/packages/GimmeProxy/):
 
 ```
 Install-Package GimmeProxy

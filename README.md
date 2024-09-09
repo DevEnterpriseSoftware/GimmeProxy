@@ -13,7 +13,7 @@ Install-Package GimmeProxy
 ```
 
 Random proxy getter methods are provided in a simple static class called `GimmeProxyClient`.
-Use the various `GetRandomProxyAsync` overloads to retrive a random proxy using the [GimmeProxy API](https://gimmeproxy.com/#api).
+Use the various `GetRandomProxyAsync` overloads to retrieve a random proxy using the [GimmeProxy API](https://gimmeproxy.com/#api).
 
 ```csharp
 using GimmeProxy;

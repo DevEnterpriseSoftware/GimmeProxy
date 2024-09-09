@@ -81,7 +81,7 @@ namespace GimmeProxy
     /// List of websites that work (and don't work) through this proxy.
     /// </summary>
     [DataMember(Name = "websites")]
-    public Dictionary<Websites, bool> Websites { get; set; } = new Dictionary<Websites, bool>();
+    public Dictionary<Websites, bool> Websites { get; set; } = [];
 
     /// <summary>
     /// Country this proxy is coming from.

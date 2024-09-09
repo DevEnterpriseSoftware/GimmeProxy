@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFrameworks>net5.0;net6.0;net47;net471;net472;net48</TargetFrameworks>
+	<TargetFrameworks>net6.0;net8.0;net47;net471;net472;net48;net481</TargetFrameworks>
     <RootNamespace>GimmeProxy</RootNamespace>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <Version>1.0.2.0</Version>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
+    <Version>1.0.3.0</Version>
+    <Configurations>Debug;Release;NuGet</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -28,21 +29,20 @@
     <PackageTags>proxy;api;sdk;</PackageTags>
     <PackageIcon>gimmeproxy.png</PackageIcon>
     <PackageIconUrl>https://www.deventerprise.com/img/gimmeproxy.png</PackageIconUrl>
-    <PackageReleaseNotes>- Updated to .NET 6 and support more framework versions.</PackageReleaseNotes>
+    <PackageReleaseNotes>- Updated to .NET 8 and support more framework versions.</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='NuGet'">
-    <None Include="gimmeproxy.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="gimmeproxy.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net47' Or '$(TargetFramework)'=='net471' Or '$(TargetFramework)'=='net472' Or '$(TargetFramework)'=='net48'">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 

@@ -61,7 +61,7 @@ namespace GimmeProxy
     /// <summary>
     /// Return only proxies with supported ports.
     /// </summary>
-    public ICollection<int> Ports { get; } = new HashSet<int>();
+    public ICollection<int> Ports { get; } = [];
 
     /// <summary>
     /// Return only proxies with specified countries.

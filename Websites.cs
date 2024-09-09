@@ -14,28 +14,18 @@ namespace GimmeProxy
     None = 0,
 
     /// <summary>
-    /// Tested working against Example.
-    /// </summary>
-    Example = 1,
-
-    /// <summary>
     /// Tested working against Google.
     /// </summary>
-    Google = 2,
+    Google = 1,
 
     /// <summary>
     /// Tested working against Amazon.
     /// </summary>
-    Amazon = 4,
+    Amazon = 2,
 
     /// <summary>
     /// Tested working against Yelp.
     /// </summary>
-    Yelp = 8,
-
-    /// <summary>
-    /// Tested working against Google Maps.
-    /// </summary>
-    Google_Maps = 16,
+    Yelp = 4,
   }
 }

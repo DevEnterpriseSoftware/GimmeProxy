@@ -15,7 +15,7 @@ namespace GimmeProxy
     /// </summary>
     /// <seealso cref="LastChecked"/>
     [DataMember(Name = "tsChecked")]
-    public long LastCheckedTimestamp { get; set; }
+    public long LastCheckedTimestamp { get; init; }
 
     /// <summary>
     /// The last time this proxy was checked.
@@ -29,12 +29,12 @@ namespace GimmeProxy
     /// The speed.
     /// </value>
     [DataMember(Name = "speed")]
-    public float SpeedInKilobytes { get; set; }
+    public float SpeedInKilobytes { get; init; }
 
     /// <summary>
     /// Other protocols supported by this proxy (if any).
     /// </summary>
     [DataMember(Name = "otherProtocols")]
-    public List<ResponseProxyInformation> OtherProtocols { get; } = new List<ResponseProxyInformation>();
+    public List<ResponseProxyInformation> OtherProtocols { get; } = [];
   }
 }

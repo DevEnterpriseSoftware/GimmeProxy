@@ -4,71 +4,76 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace GimmeProxy
+namespace GimmeProxy;
+
+/// <summary>
+/// A GimmeProxy API client.
+/// </summary>
+public static class GimmeProxyClient
 {
+  private static readonly HttpClient defaultHttpClient = new();
+
   /// <summary>
-  /// A GimmeProxy API client.
+  /// Returns one random proxy with no specific options.
   /// </summary>
-  public static class GimmeProxyClient
+  /// <exception cref="HttpRequestException">Can be thrown if the request was not successful.</exception>
+  /// <param name="cancellationToken">(Optional) A token that allows processing to be cancelled.</param>
+  /// <returns>
+  /// Random proxy details.
+  /// </returns>
+  public static Task<GimmeProxyResponse?> GetRandomProxyAsync(CancellationToken cancellationToken = default)
+    => GetRandomProxyAsync(defaultHttpClient, new(), cancellationToken);
+
+  /// <summary>
+  /// Returns one random proxy with additional filter parameters.
+  /// </summary>
+  /// <exception cref="HttpRequestException">Can be thrown if the request was not successful.</exception>
+  /// <param name="proxyOptions">Options for filtering proxy result.</param>
+  /// <param name="cancellationToken">(Optional) A token that allows processing to be cancelled.</param>
+  /// <returns>
+  /// Random proxy details.
+  /// </returns>
+  public static Task<GimmeProxyResponse?> GetRandomProxyAsync(GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
+    => GetRandomProxyAsync(defaultHttpClient, proxyOptions, cancellationToken);
+
+  /// <summary>
+  /// Returns one random proxy with additional filter parameters.
+  /// </summary>
+  /// <exception cref="HttpRequestException">Can be thrown if the request was not successful.</exception>
+  /// <param name="httpClient">Provide your own HTTP client to make the request.</param>
+  /// <param name="proxyOptions">Options for filtering proxy result.</param>
+  /// <param name="cancellationToken">(Optional) A token that allows processing to be cancelled.</param>
+  /// <returns>
+  /// Random proxy details.
+  /// </returns>
+  public static async Task<GimmeProxyResponse?> GetRandomProxyAsync(HttpClient httpClient, GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
   {
-    private static readonly HttpClient defaultHttpClient = new();
+    var url = proxyOptions.ToString();
+    var response = await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
-    /// <summary>
-    /// Returns one random proxy with no specific options.
-    /// </summary>
-    /// <exception cref="HttpRequestException">Can be thrown if the request was not successful.</exception>
-    /// <param name="cancellationToken">(Optional) A token that allows processing to be cancelled.</param>
-    /// <returns>
-    /// Random proxy details.
-    /// </returns>
-    public static Task<GimmeProxyResponse> GetRandomProxyAsync(CancellationToken cancellationToken = default)
-      => GetRandomProxyAsync(defaultHttpClient, new(), cancellationToken);
-
-    /// <summary>
-    /// Returns one random proxy with additional filter parameters.
-    /// </summary>
-    /// <exception cref="HttpRequestException">Can be thrown if the request was not successful.</exception>
-    /// <param name="proxyOptions">Options for filtering proxy result.</param>
-    /// <param name="cancellationToken">(Optional) A token that allows processing to be cancelled.</param>
-    /// <returns>
-    /// Random proxy details.
-    /// </returns>
-    public static Task<GimmeProxyResponse> GetRandomProxyAsync(GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
-      => GetRandomProxyAsync(defaultHttpClient, proxyOptions, cancellationToken);
-
-    /// <summary>
-    /// Returns one random proxy with additional filter parameters.
-    /// </summary>
-    /// <exception cref="HttpRequestException">Can be thrown if the request was not successful.</exception>
-    /// <param name="httpClient">Provide your own HTTP client to make the request.</param>
-    /// <param name="proxyOptions">Options for filtering proxy result.</param>
-    /// <param name="cancellationToken">(Optional) A token that allows processing to be cancelled.</param>
-    /// <returns>
-    /// Random proxy details.
-    /// </returns>
-    public static async Task<GimmeProxyResponse> GetRandomProxyAsync(HttpClient httpClient, GimmeProxyRequest proxyOptions, CancellationToken cancellationToken = default)
-    {
-      var url = proxyOptions.ToString();
-      var response = await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
-
-      response.EnsureSuccessStatusCode();
+    response.EnsureSuccessStatusCode();
 
 #if NET47 || NET471 || NET472 || NET48 || NET481
-      var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+    var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-      var cleanJson = json.Replace("<br>", string.Empty)
-                          .Replace("<BR>", string.Empty)
-                          .Replace("{},", "[],");
+    var cleanJson = json.Replace("<br>", string.Empty)
+                        .Replace("<BR>", string.Empty)
+                        .Replace("{},", "[],");
 #else
-      var json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+    var json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
-      // Some data comes back with <br> tags, this is just a sweeping replace cleanup.
-      // OtherProtocols also comes back as an object instead of an empty array.
-      var cleanJson = json.Replace("<br>", string.Empty, StringComparison.OrdinalIgnoreCase)
-                          .Replace("{},", "[],");
+    // Some data comes back with <br> tags, this is just a sweeping replace cleanup.
+    // OtherProtocols also comes back as an object instead of an empty array.
+    var cleanJson = json.Replace("<br>", string.Empty, StringComparison.OrdinalIgnoreCase)
+                        .Replace("{},", "[],");
 #endif
 
-      return JsonConvert.DeserializeObject<GimmeProxyResponse>(cleanJson);
+    var error = JsonConvert.DeserializeObject<GimmeProxyErrorResponse>(cleanJson);
+    if (error is not null && !string.IsNullOrEmpty(error.ErrorMessage))
+    {
+      throw new GimmeProxyException(error.ErrorMessage!);
     }
+
+    return JsonConvert.DeserializeObject<GimmeProxyResponse>(cleanJson);
   }
 }

@@ -2,39 +2,38 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace GimmeProxy
+namespace GimmeProxy;
+
+/// <summary>
+/// One random working proxy from our database.
+/// </summary>
+[DataContract]
+public class GimmeProxyResponse : ResponseProxyInformation
 {
   /// <summary>
-  /// One random working proxy from our database.
+  /// The last time this proxy was checked (UNIX timestamp).
   /// </summary>
-  [DataContract]
-  public class GimmeProxyResponse : ResponseProxyInformation
-  {
-    /// <summary>
-    /// The last time this proxy was checked (UNIX timestamp).
-    /// </summary>
-    /// <seealso cref="LastChecked"/>
-    [DataMember(Name = "tsChecked")]
-    public long LastCheckedTimestamp { get; init; }
+  /// <seealso cref="LastChecked"/>
+  [DataMember(Name = "tsChecked")]
+  public long LastCheckedTimestamp { get; init; }
 
-    /// <summary>
-    /// The last time this proxy was checked.
-    /// </summary>
-    public TimeSpan LastChecked => DateTimeOffset.UtcNow - DateTimeOffset.FromUnixTimeSeconds(LastCheckedTimestamp);
+  /// <summary>
+  /// The last time this proxy was checked.
+  /// </summary>
+  public TimeSpan LastChecked => DateTimeOffset.UtcNow - DateTimeOffset.FromUnixTimeSeconds(LastCheckedTimestamp);
 
-    /// <summary>
-    /// The speed of the proxy in kilobytes.
-    /// </summary>
-    /// <value>
-    /// The speed.
-    /// </value>
-    [DataMember(Name = "speed")]
-    public float SpeedInKilobytes { get; init; }
+  /// <summary>
+  /// The speed of the proxy in kilobytes.
+  /// </summary>
+  /// <value>
+  /// The speed.
+  /// </value>
+  [DataMember(Name = "speed")]
+  public float SpeedInKilobytes { get; init; }
 
-    /// <summary>
-    /// Other protocols supported by this proxy (if any).
-    /// </summary>
-    [DataMember(Name = "otherProtocols")]
-    public List<ResponseProxyInformation> OtherProtocols { get; } = [];
-  }
+  /// <summary>
+  /// Other protocols supported by this proxy (if any).
+  /// </summary>
+  [DataMember(Name = "otherProtocols")]
+  public List<ResponseProxyInformation> OtherProtocols { get; } = [];
 }

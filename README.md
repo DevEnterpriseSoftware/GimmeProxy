@@ -22,24 +22,31 @@ public class Program
 {
   static async Task MainAsync(string[] args)
   {
-    // Get a random proxy with no filtering.
-    var randomProxy = await GimmeProxyClient.GetRandomProxyAsync();
-
-    // Returns only proxies that support GET requests, HTTPS and were checked in last 3600 seconds.
-    var requestOptions = new GimmeProxyRequest
+    try
     {
-      SupportsPost = true,
-      SupportsHttps = true,
-      CheckedSecondsAgo = 3600,
-    };
+      // Get a random proxy with no filtering.
+      var randomProxy = await GimmeProxyClient.GetRandomProxyAsync();
+      
+      // Returns only proxies that support GET requests, HTTPS and were checked in last 3600 seconds.
+      var requestOptions = new GimmeProxyRequest
+      {
+        SupportsPost = true,
+        SupportsHttps = true,
+        CheckedSecondsAgo = 3600,
+      };
+      
+      // https://gimmeproxy.com/api/getProxy?post=true&supportsHttps=true&maxCheckPeriod=3600
+      var url = request.ToString();
+      
+      // You can also sign-up for an API key for commercial use.
+      requestOptions.ApiKey = "xxxxxxx";
 
-    // https://gimmeproxy.com/api/getProxy?post=true&supportsHttps=true&maxCheckPeriod=3600
-    var url = request.ToString();
-    
-    // You can also sign-up for an API key for commercial use.
-    requestOptions.ApiKey = "xxxxxxx";
-    
-    var anotherProxy = await GimmeProxyClient.GetRandomProxyAsync(requestOptions);
+      var anotherProxy = await GimmeProxyClient.GetRandomProxyAsync(requestOptions);
+    }
+    catch (GimmeProxyException ex)
+    {
+      Console.WriteLine($"Failed to get a proxy: {ex.Message}");
+    }
   }
 }
 ```
